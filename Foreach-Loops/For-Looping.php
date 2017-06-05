@@ -1,10 +1,11 @@
 <?php
 include ('list.php');
 
-$status = false;
+$status = 'all';
 $field = 'priority';
-$order = array();
+$action = 'week';
 
+$order = array();
 if ($status ='all') {
   $order = array_keys($list);
 } else {
@@ -15,14 +16,26 @@ if ($status ='all') {
   }
 }
 
-if ($field) {
-  $sort = array();
-  foreach ($order as $id) {
-    $sort[$id] = $list[$id][$field];
-  }
-  asort($sort);
-  $order = array_keys($sort);
+switch ($action) {
+  case 'sort':
+    if ($field) {
+      $sort = array();
+      foreach ($order as $id) {
+        $sort[$id] = $list[$id][$field];
+      }
+      asort($sort);
+      $order = array_keys($sort);
+    }
+    break;
+    case 'week':
+      foreach ($order as $key => $value) {
+        if(strtotime($list[$value]['due']) > strtotime("+1 week") || !$list[$value]['due']) {
+          unset($order[$key]);
+        }
+      }
+    break;
 }
+
 
 // var_dump($sort);
 // var_dump($list);
